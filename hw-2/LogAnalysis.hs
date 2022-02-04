@@ -27,14 +27,25 @@ parseMessage s =
   case parseMaybeMessage s of
     (Just logMessage) -> logMessage
     Nothing -> Unknown s
--- parseMessage s =  
---   case parseMessageType s of
---     Just (messageType, restWithTimestamp) -> 
---       case parseTimeStamp restWithTimestamp of
---         Just (timestamp, rest) -> LogMessage messageType timestamp rest
---         Nothing -> Unknown s
---     Nothing -> Unknown s
 
 parse :: String -> [LogMessage]
 parse file = map parseMessage (lines file)
 
+insert :: LogMessage -> MessageTree -> MessageTree
+insert (Unknown _) tree = tree
+insert message Leaf = Node Leaf message Leaf
+insert msg@(LogMessage _ timeStamp _) (Node leftTree (LogMessage _ timeStampAtNode _) rightTree)
+  | timeStamp <= timeStampAtNode = insert msg leftTree
+  | otherwise = insert msg rightTree
+insert _ tree = tree
+
+build :: [LogMessage] -> MessageTree
+build = foldr insert Leaf
+
+inOrder :: MessageTree -> [LogMessage]
+inOrder Leaf = []
+inOrder (Node leftTree msg rightTree) = inOrder leftTree ++ [msg] ++ inOrder rightTree
+
+whatWentWrong :: [LogMessage] -> [String]
+whatWentWrong [] = []
+whatWentWrong msgs = [s | (LogMessage (Error level) _ s) <- msgs, level >= 50] 
