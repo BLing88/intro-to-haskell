@@ -10,5 +10,6 @@ fun1 (x:xs)
   | otherwise = fun1 xs
 
 fun1' :: [Integer] -> Integer
-fun1' = foldl' (\prod next -> prod * (next - 2)) 1 . filter even
+fun1' = foldl' (*) 1 . map (flip (-) 2) . filter even
+
 
