@@ -77,3 +77,6 @@ xor :: [Bool] -> Bool
 xor [] = True
 xor [b] = b
 xor bs = foldr1 xorFn bs
+
+map' :: (a -> b) -> [a] -> [b]
+map' f = foldr ((:) . f) []
