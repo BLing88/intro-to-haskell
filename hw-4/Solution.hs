@@ -67,3 +67,13 @@ isValidBalancedTree (Node height left _ right) =
   && isValidBalancedTree right
   where leftHeight = heightTree left
         rightHeight = heightTree right
+
+-- Exercise 3
+
+xorFn :: Bool -> Bool -> Bool
+xorFn b1 b2 = (b1 || b2) && not (b1 && b2)
+
+xor :: [Bool] -> Bool
+xor [] = True
+xor [b] = b
+xor bs = foldr1 xorFn bs
