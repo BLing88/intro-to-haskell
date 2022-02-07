@@ -12,4 +12,16 @@ fun1 (x:xs)
 fun1' :: [Integer] -> Integer
 fun1' = foldl' (*) 1 . map (flip (-) 2) . filter even
 
+fun2 :: Integer -> Integer
+fun2 1 = 0
+fun2 n | even n = n + fun2 (n `div` 2)
+       | otherwise = fun2 (3 * n + 1)
 
+transform :: Integer -> Integer
+transform n
+  | even n = n `div` 2
+  | otherwise = 3 * n + 1
+
+fun2' :: Integer -> Integer
+fun2' n = sum $ filter even fun2Sequence
+  where fun2Sequence = takeWhile (/= 1) (iterate transform n)
