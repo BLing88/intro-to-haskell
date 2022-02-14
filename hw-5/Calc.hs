@@ -4,6 +4,7 @@ module Calc where
 import ExprT
 import Parser (parseExp)
 import qualified StackVM as SVM
+import qualified Data.Map as M
 
 -- Exercise 1
 eval :: ExprT -> Integer
@@ -84,3 +85,39 @@ expr :: Expr a => a
 expr = mul (add (lit 4) (mul (lit (-1)) (lit 3))) (mul (lit 5) (lit 8))
 
 test = SVM.stackVM expr -- Right (SVM.IVal 40))
+
+-- Exercisse 6
+class HasVars a where
+  var :: String -> a
+
+data VarExprT = VLit Integer
+              | VAdd VarExprT VarExprT
+              | VMul VarExprT VarExprT
+              | Var String
+  deriving (Show, Eq)
+
+instance Expr VarExprT where
+  lit = VLit
+  add = VAdd
+  mul = VMul
+
+instance HasVars VarExprT where
+  var s = Var s
+
+instance HasVars (M.Map String Integer -> Maybe Integer) where
+  var s = M.lookup s
+
+instance Expr (M.Map String Integer -> Maybe Integer) where
+  lit n _ = Just n
+  -- map has the mapping from variables to values
+  -- and the expressions take the map and retrieve
+  -- the value, if any
+  add expression1 expression2 map = (+) <$> expression1 map <*> expression2 map
+  mul expression1 expression2 map = (*) <$> expression1 map <*> expression2 map
+
+withVars :: [(String, Integer)]
+         -> (M.Map String Integer -> Maybe Integer)
+         -> Maybe Integer
+withVars vs exp = exp $ M.fromList vs
+
+
