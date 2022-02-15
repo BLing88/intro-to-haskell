@@ -65,3 +65,13 @@ dropJ n (Append _ left right)
         newLeft = dropJ n left
         newSize = tag right <> tag newLeft
 
+takeJ :: (Sized b, Monoid b) => 
+         Int -> JoinList b a -> JoinList b a
+takeJ n jl | n <= 0 = Empty
+           | n >= getSize (size (tag jl)) = jl
+takeJ _ Empty = Empty
+takeJ _ (Single m a) = Single m a
+takeJ n (Append m left right)
+  | n <= leftSize = takeJ n left
+  | otherwise = left +++ takeJ (n - leftSize) right
+  where leftSize = getSize $ size (tag left)
