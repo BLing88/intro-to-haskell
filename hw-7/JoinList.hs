@@ -1,6 +1,7 @@
 module JoinList where
 
 import Sized
+import Scrabble
 
 data JoinList m a = Empty
                   | Single m a
@@ -74,3 +75,7 @@ takeJ n (Append m left right)
   | n <= leftSize = takeJ n left
   | otherwise = left +++ takeJ (n - leftSize) right
   where leftSize = getSize $ size (tag left)
+
+-- Exercise 3
+scoreLine :: String -> JoinList Score String
+scoreLine s = Single (scoreString s) s
