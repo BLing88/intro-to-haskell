@@ -5,6 +5,9 @@ import Data.Char (toLower)
 newtype Score = Score Int 
   deriving (Eq, Show)
 
+getScore :: Score -> Int
+getScore (Score i) = i
+
 instance Semigroup Score where
   (Score m) <> (Score n) = Score (m + n)
 
