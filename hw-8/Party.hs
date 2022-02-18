@@ -1,6 +1,7 @@
 module Party where
 
 import Employee
+import Data.Tree (Tree(Node, rootLabel, subForest))
 
 -- Exercise 1
 glCons :: Employee -> GuestList -> GuestList 
@@ -19,3 +20,12 @@ moreFun :: GuestList -> GuestList -> GuestList
 moreFun glist1@(GL _ fun1) glist2@(GL _ fun2) 
   | fun1 >= fun2 = glist1
   | otherwise = glist2
+
+-- Exercise 2
+treeFold :: (a -> [b] -> b) -> Tree a -> b
+treeFold f Node { rootLabel = root, subForest = subforest } = 
+  f root (map (treeFold f) subforest)
+
+
+test :: Employee -> [Fun] -> Fun
+test (Emp _ fun) funs = fun + sum funs
