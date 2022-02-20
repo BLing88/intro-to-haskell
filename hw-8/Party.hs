@@ -29,3 +29,14 @@ treeFold f Node { rootLabel = root, subForest = subforest } =
 
 test :: Employee -> [Fun] -> Fun
 test (Emp _ fun) funs = fun + sum funs
+
+-- Exercise 3
+nextLevel :: Employee -> [(GuestList, GuestList)] -> (GuestList, GuestList)
+nextLevel emp@Emp { empFun = fun } [] =  (GL [emp] fun, GL [] 0)
+nextLevel boss glists = (glCons boss withBoss, withoutBoss)
+  where (withBoss, withoutBoss) = mconcat $ map (\(with, without) -> (without, moreFun with without)) glists 
+
+-- Exercise 4
+maxFun :: Tree Employee -> GuestList 
+maxFun company = moreFun withBoss withoutBoss
+  where (withBoss, withoutBoss) = treeFold nextLevel company
