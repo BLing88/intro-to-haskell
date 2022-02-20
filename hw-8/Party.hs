@@ -2,6 +2,8 @@ module Party where
 
 import Employee
 import Data.Tree (Tree(Node, rootLabel, subForest))
+import qualified System.IO as IO
+import Data.List (sort)
 
 -- Exercise 1
 glCons :: Employee -> GuestList -> GuestList 
@@ -40,3 +42,21 @@ nextLevel boss glists = (glCons boss withBoss, withoutBoss)
 maxFun :: Tree Employee -> GuestList 
 maxFun company = moreFun withBoss withoutBoss
   where (withBoss, withoutBoss) = treeFold nextLevel company
+
+
+-- Exercise 5
+
+sortGuestList :: GuestList -> [String]
+sortGuestList (GL list _) = sort $ map empName list
+
+guestListFun :: GuestList -> Fun
+guestListFun (GL _ fun) = fun
+
+main :: IO ()
+main = do
+  handle <- IO.openFile "company.txt" IO.ReadMode
+  companyTree <- IO.hGetContents handle
+  let glist = maxFun (read companyTree)
+  print $ "Total fun: " ++ show (guestListFun glist)
+  mapM_ print (sortGuestList glist)
+  IO.hClose handle
