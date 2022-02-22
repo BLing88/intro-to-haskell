@@ -66,3 +66,25 @@ instance Functor Parser where
   fmap f Parser { runParser = runParserA } =
     Parser { runParser = runParserB }
     where runParserB s = first f <$> runParserA s
+
+-- Exercise 2
+instance Applicative Parser where
+  pure a = Parser (\_ -> Just (a, ""))
+  Parser { runParser = parserAToB } <*> Parser { runParser = parserA } = Parser { runParser = fb }
+    where 
+      fb s = case parserAToB s of
+        Just (f, remaining) -> case parserA remaining of
+          Just (val, rest) -> Just (f val, rest)
+          Nothing -> Nothing
+        Nothing -> Nothing
+
+-- Exercise 3
+abParser :: Parser (Char, Char)
+abParser = (,) <$> char 'a' <*> char 'b'
+
+abParser_ :: Parser ()
+abParser_ = (\_ _ -> ()) <$> char 'a' <*> char 'b'
+    
+intPair :: Parser [Integer]
+intPair = (\a _ b -> [a, b]) <$> posInt <*> char ' ' <*> posInt
+
