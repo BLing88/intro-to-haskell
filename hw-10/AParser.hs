@@ -72,11 +72,11 @@ instance Applicative Parser where
   pure a = Parser (\_ -> Just (a, ""))
   Parser { runParser = parserAToB } <*> Parser { runParser = parserA } = Parser { runParser = fb }
     where 
-      fb s = case parserAToB s of
-        Just (f, remaining) -> case parserA remaining of
-          Just (val, rest) -> Just (f val, rest)
-          Nothing -> Nothing
-        Nothing -> Nothing
+      fb s = do
+        (f, remaining) <- parserAToB s
+        (val, rest) <- parserA remaining
+        pure (f val, rest)
+
 
 -- Exercise 3
 abParser :: Parser (Char, Char)
