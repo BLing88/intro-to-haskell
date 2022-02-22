@@ -69,7 +69,7 @@ instance Functor Parser where
 
 -- Exercise 2
 instance Applicative Parser where
-  pure a = Parser (\_ -> Just (a, ""))
+  pure a = Parser (\s -> Just (a, s))
   Parser { runParser = parserAToB } <*> Parser { runParser = parserA } = Parser { runParser = fb }
     where 
       fb s = do
